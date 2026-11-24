@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Ingresar{% endblock %}
+{% block publico %}
+<h1>Registro Documental</h1>
+<p class="sub">Dirección de Carrera de Ingeniería en Sistemas · F.IN.I.</p>
+<form method="post" class="ficha">
+  <div class="fila"><div><label for="usuario">Usuario</label><input type="text" id="usuario" name="usuario" autofocus required></div></div>
+  <div class="fila"><div><label for="clave">Contraseña</label><input type="password" id="clave" name="clave" required></div></div>
+  <button class="boton">Ingresar</button>
+</form>
+{% endblock %}

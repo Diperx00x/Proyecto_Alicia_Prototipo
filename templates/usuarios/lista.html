@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Usuarios{% endblock %}
+{% block contenido %}
+<h1>Usuarios</h1>
+<p class="sub">Solo la directora crea usuarios. Un usuario desactivado no puede ingresar, pero su nombre queda en el historial.</p>
+<table style="margin-bottom:2rem">
+  <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+  <tbody>{% for u in usuarios %}
+  <tr><td>{{ u.nombre }}</td><td>{{ u.usuario }}</td><td>{{ 'Directora' if u.rol=='DIRECTORA' else 'Secretaria' }}</td>
+    <td>{{ 'Activo' if u.activo else 'Desactivado' }}</td>
+    <td>{% if u.id_usuario != g.usuario.id_usuario %}
+      <form method="post"><input type="hidden" name="accion" value="estado"><input type="hidden" name="id_usuario" value="{{ u.id_usuario }}">
+        <input type="hidden" name="activo" value="{{ '0' if u.activo else '1' }}">
+        <button class="boton claro">{{ 'Desactivar' if u.activo else 'Activar' }}</button></form>{% endif %}</td></tr>
+  {% endfor %}</tbody>
+</table>
+<h2>Nuevo usuario</h2>
+<form method="post" class="ficha">
+  <div class="fila">
+    <div><label>Nombre completo</label><input type="text" name="nombre" required></div>
+    <div><label>Usuario</label><input type="text" name="usuario" required></div>
+  </div>
+  <div class="fila">
+    <div><label>Contraseña inicial</label><input type="password" name="clave" minlength="6" required></div>
+    <div><label>Rol</label><select name="rol"><option value="SECRETARIA">Secretaria</option><option value="DIRECTORA">Directora</option></select></div>
+  </div>
+  <button class="boton">Crear usuario</button>
+</form>
+{% endblock %}

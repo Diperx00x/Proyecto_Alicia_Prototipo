@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}Registrar acta{% endblock %}
+{% block contenido %}
+<h1>Registrar acta de graduación</h1>
+<p class="sub">Si el carnet ya está registrado (por ejemplo, porque fue auxiliar), el nombre se completa solo.</p>
+<form method="post" enctype="multipart/form-data" class="ficha">
+  <div class="fila">
+    <div><label>N° de acta <small>(del CPD)</small></label><input type="text" name="nro_acta" value="{{ datos.nro_acta or '' }}" required></div>
+    <div><label>Fecha</label><input type="date" name="fecha" value="{{ datos.fecha or '' }}" required></div>
+  </div>
+  <div class="fila">
+    <div><label>Carnet</label><input type="text" id="carnet" name="carnet" value="{{ datos.carnet or '' }}" required placeholder="Ej.: 9876543 SC"></div>
+    <div><label>Nombres</label><input type="text" id="nombres" name="nombres" value="{{ datos.nombres or '' }}" required></div>
+    <div><label>Apellidos</label><input type="text" id="apellidos" name="apellidos" value="{{ datos.apellidos or '' }}" required></div>
+  </div>
+  <div class="fila">
+    <div><label>Modalidad</label><select name="modalidad" required><option value="">Elija…</option>
+      {% for m in modalidades %}<option {{ 'selected' if datos.modalidad==m }}>{{ m }}</option>{% endfor %}</select></div>
+    <div><label>Nota <small>(0 a 100)</small></label><input type="number" name="nota" min="0" max="100" step="1" value="{{ datos.nota or '' }}" required></div>
+  </div>
+  <div class="fila"><div><label>Acta escaneada <small>(PDF, JPG o PNG)</small></label><input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png"></div></div>
+  <div class="acciones"><button class="boton">Guardar</button><a class="boton claro" href="{{ url_for('academico.actas') }}">Cancelar</a></div>
+</form>
+<script>
+// Al salir del campo carnet, busca si el estudiante ya existe y completa sus datos.
+document.getElementById('carnet').addEventListener('change', async function () {
+  const carnet = this.value.trim();
+  if (!carnet) return;
+  const r = await fetch('{{ url_for("academico.estudiante_json", carnet="__C__") }}'.replace('__C__', encodeURIComponent(carnet)));
+  const e = await r.json();
+  if (e.encontrado) {
+    document.getElementById('nombres').value = e.nombres;
+    document.getElementById('apellidos').value = e.apellidos;
+  }
+});
+</script>
+{% endblock %}

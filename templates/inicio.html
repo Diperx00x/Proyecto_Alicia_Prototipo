@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<div class="encabezado">
+  <div><h1>Inicio</h1><p class="sub">Gestión {{ gestion }}</p></div>
+  <div class="acciones">
+    <a class="boton" href="{{ url_for('documentos.nuevo', sentido='entrada') }}">Registrar recibido</a>
+    <a class="boton" href="{{ url_for('documentos.nuevo', sentido='salida') }}">Registrar enviado</a>
+  </div>
+</div>
+<div class="cifras">
+  <div class="cifra"><b>{{ resumen.entradas }}</b><span>recibidos este año</span></div>
+  <div class="cifra"><b>{{ resumen.salidas }}</b><span>enviados este año</span></div>
+  <div class="cifra {{ 'alerta' if pendientes }}"><b>{{ pendientes|length }}</b><span>esperando respuesta</span></div>
+  <div class="cifra {{ 'alerta' if vencidos }}"><b>{{ vencidos }}</b><span>con plazo vencido</span></div>
+  <div class="cifra"><b>{{ informes_faltantes }}</b><span>informes de docentes por entregar</span></div>
+  <div class="cifra"><b>{{ convocatorias_abiertas }}</b><span>convocatorias abiertas</span></div>
+</div>
+<h2>Pendientes de respuesta</h2>
+{% set pendientes = pendientes[:8] %}
+{% include "_tabla_pendientes.html" %}
+<p><a href="{{ url_for('documentos.pendientes') }}">Ver todos los pendientes →</a></p>
+{% endblock %}

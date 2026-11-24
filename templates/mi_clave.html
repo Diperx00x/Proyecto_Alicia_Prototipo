@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Cambiar contraseña{% endblock %}
+{% block contenido %}
+<h1>Cambiar contraseña</h1>
+<p class="sub">Use al menos 6 caracteres.</p>
+<form method="post" class="ficha">
+  <div class="fila"><div><label>Contraseña actual</label><input type="password" name="actual" required></div></div>
+  <div class="fila">
+    <div><label>Nueva contraseña</label><input type="password" name="nueva" minlength="6" required></div>
+    <div><label>Repetir nueva</label><input type="password" name="nueva2" minlength="6" required></div>
+  </div>
+  <button class="boton">Guardar</button>
+</form>
+{% endblock %}

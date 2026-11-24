@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Auxiliares de cátedra{% endblock %}
+{% block contenido %}
+<h1>Auxiliares de cátedra</h1>
+<p class="sub">Una convocatoria por materia y semestre. Se registran los postulantes, sus notas, y al cerrar el sistema indica quién ganó.</p>
+{% if convocatorias %}
+<table>
+  <thead><tr><th>Periodo</th><th>Materia</th><th>Publicada</th><th>Postulantes</th><th>Estado</th></tr></thead>
+  <tbody>{% for c in convocatorias %}
+  <tr><td class="num">{{ c.periodo }}/{{ c.gestion }}</td>
+      <td><a href="{{ url_for('academico.convocatoria', id_convocatoria=c.id_convocatoria) }}">{{ c.sigla }} – {{ c.materia }}</a></td>
+      <td class="num">{{ c.fecha_publicacion|fecha }}</td><td class="num">{{ c.postulantes }}</td>
+      <td><span class="estado {{ c.estado }}">{{ 'Abierta' if c.estado=='ABIERTA' else 'Cerrada' }}</span></td></tr>
+  {% endfor %}</tbody>
+</table>
+{% else %}<div class="vacio">Todavía no hay convocatorias.</div>{% endif %}
+<h2>Nueva convocatoria</h2>
+<form method="post" class="ficha">
+  <div class="fila">
+    <div><label>Materia</label><select name="id_materia" required><option value="">Elija…</option>
+      {% for m in materias %}<option value="{{ m.id_materia }}">{{ m.sigla }} – {{ m.nombre }}</option>{% endfor %}</select>
+      <p class="ayuda">Las materias se agregan en «Informes de docentes».</p></div>
+    <div><label>Gestión</label><input type="number" name="gestion" value="{{ anio }}" required></div>
+    <div><label>Semestre</label><select name="periodo"><option>1</option><option>2</option></select></div>
+    <div><label>Fecha de publicación</label><input type="date" name="fecha" value="{{ hoy }}" required></div>
+  </div>
+  <button class="boton">Registrar convocatoria</button>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titulo %}Registrar informe final{% endblock %}
+{% block contenido %}
+<h1>Registrar informe final</h1>
+<p class="sub">{{ a.sigla }} – {{ a.materia }} · {{ a.docente }} · Semestre {{ a.periodo }}/{{ a.gestion }}</p>
+<form method="post" enctype="multipart/form-data" class="ficha">
+  <div class="fila">
+    <div><label>Fecha de entrega</label><input type="date" name="fecha" value="{{ hoy }}" required></div>
+    <div><label>Informe escaneado</label><input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required></div>
+  </div>
+  <div class="acciones"><button class="boton">Guardar</button><a class="boton claro" href="{{ url_for('academico.docentes') }}">Cancelar</a></div>
+</form>
+{% endblock %}

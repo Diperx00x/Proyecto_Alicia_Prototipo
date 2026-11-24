@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Convocatoria {{ c.sigla }}{% endblock %}
+{% block contenido %}
+<div class="encabezado">
+  <div><span class="sentido">CONVOCATORIA A AUXILIAR DE CÁTEDRA</span>
+    <h1>{{ c.sigla }} – {{ c.materia }}</h1>
+    <p class="sub">Semestre {{ c.periodo }}/{{ c.gestion }} · publicada el {{ c.fecha_publicacion|fecha }}</p></div>
+  <span class="estado {{ c.estado }}">{{ 'Abierta' if c.estado=='ABIERTA' else 'Cerrada' }}</span>
+</div>
+{% if ganador %}
+<div class="ganador">{% if empate %}<strong>Empate</strong> en el primer lugar ({{ ganador.total }} puntos). La decisión queda a cargo del consejo de carrera.
+  {% else %}<strong>Primer lugar:</strong> {{ ganador.nombres }} {{ ganador.apellidos }} ({{ ganador.carnet }}) con {{ ganador.total }} puntos.{% endif %}</div>
+{% endif %}
+<h2>Postulantes <small class="ayuda">(nota total = méritos + examen)</small></h2>
+{% if postulantes %}
+<table>
+  <thead><tr><th>#</th><th>Carnet</th><th>Estudiante</th><th>Méritos</th><th>Examen</th><th>Total</th></tr></thead>
+  <tbody>{% for p in postulantes %}
+  <tr><td class="num">{{ loop.index }}</td><td class="num">{{ p.carnet }}</td><td>{{ p.apellidos }}, {{ p.nombres }}</td>
+    {% if c.estado == 'ABIERTA' %}
+    <td colspan="2"><form method="post" class="acciones">
+      <input type="hidden" name="accion" value="notas"><input type="hidden" name="id_postulacion" value="{{ p.id_postulacion }}">
+      <input type="number" step="0.01" min="0" max="100" name="nota_meritos" value="{{ p.nota_meritos if p.nota_meritos is not none else '' }}" style="width:90px" aria-label="Méritos">
+      <input type="number" step="0.01" min="0" max="100" name="nota_examen" value="{{ p.nota_examen if p.nota_examen is not none else '' }}" style="width:90px" aria-label="Examen">
+      <button class="boton claro">Guardar</button></form></td>
+    {% else %}
+    <td class="num">{{ p.nota_meritos }}</td><td class="num">{{ p.nota_examen }}</td>
+    {% endif %}
+    <td class="num"><strong>{{ p.total if p.total is not none else '—' }}</strong></td></tr>
+  {% endfor %}</tbody>
+</table>
+{% else %}<div class="vacio">Sin postulantes todavía.</div>{% endif %}
+
+{% if c.estado == 'ABIERTA' %}
+<h2>Agregar postulante</h2>
+<form method="post" class="ficha">
+  <input type="hidden" name="accion" value="postulante">
+  <div class="fila">
+    <div><label>Carnet</label><input type="text" name="carnet" required></div>
+    <div><label>Nombres</label><input type="text" name="nombres" required></div>
+    <div><label>Apellidos</label><input type="text" name="apellidos" required></div>
+  </div>
+  <button class="boton claro">Agregar</button>
+</form>
+{% if g.usuario.rol == 'DIRECTORA' %}
+<form method="post" action="{{ url_for('academico.cerrar_convocatoria', id_convocatoria=c.id_convocatoria) }}" style="margin-top:1.5rem"
+      onsubmit="return confirm('Al cerrar ya no se pueden agregar postulantes ni cambiar notas. ¿Cerrar la convocatoria?');">
+  <button class="boton">Cerrar convocatoria y ver ganador</button>
+</form>
+{% endif %}
+{% endif %}
+<p style="margin-top:2rem"><a href="{{ url_for('academico.convocatorias') }}">← Volver a convocatorias</a></p>
+{% endblock %}

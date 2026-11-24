@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}Escaneado{% endblock %}
+{% block contenido %}
+<p><a class="boton claro" href="{{ volver }}">← Volver</a></p>
+{% if ruta.lower().endswith('.pdf') %}
+<iframe class="visor" style="height:calc(100vh - 140px)" src="{{ url_for('inicio.ver_archivo', ruta=ruta) }}"></iframe>
+{% else %}
+<img class="visor" style="height:calc(100vh - 140px);object-fit:contain" src="{{ url_for('inicio.ver_archivo', ruta=ruta) }}" alt="Escaneado">
+{% endif %}
+{% endblock %}

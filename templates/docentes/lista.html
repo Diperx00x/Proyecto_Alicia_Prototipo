@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Informes de docentes{% endblock %}
+{% block contenido %}
+<h1>Informes finales de docentes</h1>
+<p class="sub">Qué docente dicta cada materia por semestre y si ya entregó su informe final.</p>
+<form class="filtros" method="get">
+  <div><label>Gestión</label><input type="number" name="gestion" value="{{ gestion }}" min="2000" max="2100" style="width:110px"></div>
+  <div><label>Semestre</label><select name="periodo"><option value="">Ambos</option>
+    <option value="1" {{ 'selected' if periodo=='1' }}>1</option><option value="2" {{ 'selected' if periodo=='2' }}>2</option></select></div>
+  <div><label class="casilla" style="margin-top:1.4rem"><input type="checkbox" name="pendientes" value="1" {{ 'checked' if solo }}> Solo sin informe</label></div>
+  <div><button class="boton claro">Filtrar</button></div>
+</form>
+{% if asignaciones %}
+<table>
+  <thead><tr><th>Periodo</th><th>Materia</th><th>Docente</th><th>Informe final</th><th></th></tr></thead>
+  <tbody>{% for a in asignaciones %}
+  <tr><td class="num">{{ a.periodo }}/{{ a.gestion }}</td><td>{{ a.sigla }} – {{ a.materia }}</td><td>{{ a.docente }}</td>
+    <td>{% if a.fecha_informe %}<span class="estado RESPONDIDO">Entregado {{ a.fecha_informe|fecha }}</span>
+        {% else %}<span class="estado vencido">Falta</span>{% endif %}</td>
+    <td>{% if a.archivo_informe %}<a href="{{ url_for('inicio.ver', ruta=a.archivo_informe, volver=request.full_path) }}">Ver</a>{% else %}<a href="{{ url_for('academico.informe', id_asignacion=a.id_asignacion) }}">Registrar informe</a>{% endif %}</td></tr>
+  {% endfor %}</tbody>
+</table>
+{% else %}<div class="vacio">No hay asignaciones con esos filtros.</div>{% endif %}
+
+<h2>Asignar docente a materia</h2>
+<form method="post" class="ficha">
+  <input type="hidden" name="accion" value="asignacion">
+  <div class="fila">
+    <div><label>Docente</label><select name="id_docente" required><option value="">Elija…</option>
+      {% for d in docentes %}<option value="{{ d.id_docente }}">{{ d.nombre }}</option>{% endfor %}</select></div>
+    <div><label>Materia</label><select name="id_materia" required><option value="">Elija…</option>
+      {% for m in materias %}<option value="{{ m.id_materia }}">{{ m.sigla }} – {{ m.nombre }}</option>{% endfor %}</select></div>
+    <div><label>Gestión</label><input type="number" name="gestion" value="{{ anio }}" required></div>
+    <div><label>Semestre</label><select name="periodo"><option>1</option><option>2</option></select></div>
+  </div>
+  <button class="boton">Asignar</button>
+</form>
+
+<h2>Registrar docente o materia</h2>
+<div class="fila" style="max-width:1000px">
+  <form method="post" class="ficha">
+    <input type="hidden" name="accion" value="docente">
+    <label>Nombre del docente</label><input type="text" name="nombre" required style="margin-bottom:.6rem">
+    <label>CI</label><input type="text" name="ci" required style="margin-bottom:.6rem">
+    <label>Correo <small>(opcional)</small></label><input type="text" name="correo" style="margin-bottom:.9rem">
+    <button class="boton claro">Agregar docente</button>
+  </form>
+  <form method="post" class="ficha">
+    <input type="hidden" name="accion" value="materia">
+    <label>Sigla</label><input type="text" name="sigla" required style="margin-bottom:.6rem" placeholder="Ej.: INF-342">
+    <label>Nombre de la materia</label><input type="text" name="nombre_materia" required style="margin-bottom:.9rem">
+    <button class="boton claro">Agregar materia</button>
+  </form>
+</div>
+{% endblock %}

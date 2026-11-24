@@ -1,0 +1,75 @@
+SISTEMA DE REGISTRO DOCUMENTAL – VERSIÓN B
+Guía rápida para instalarlo en la computadora (Windows 10 u 11)
+=============================================================
+
+Necesita internet solo para instalar. Después funciona sin internet.
+Tiempo aproximado: 20 a 30 minutos (casi todo es descargar MySQL).
+
+
+PASO 1 – Instalar Python
+------------------------
+1. Entrar a https://www.python.org/downloads/ y descargar Python 3.12 o 3.13.
+2. Al abrir el instalador, MARCAR la casilla "Add python.exe to PATH" (abajo).
+3. Clic en "Install Now".
+
+
+PASO 2 – Instalar MySQL (la base de datos)
+------------------------------------------
+1. Entrar a https://dev.mysql.com/downloads/installer/
+   Descargar "Windows (x86, 32-bit), MSI Installer" (el más grande, ~300 MB).
+   Cuando pida iniciar sesión, clic en "No thanks, just start my download".
+2. Abrir el instalador. En "Choose a Setup Type" elegir "Server only".
+3. Siguiente, siguiente (dejar el puerto 3306).
+4. En "Accounts and Roles" escribir una contraseña para "root" y ANOTARLA.
+   (Para la defensa pueden usar una fácil, por ejemplo: root1234)
+5. En "Windows Service" dejar marcado "Start the MySQL Server at System Startup".
+6. Siguiente → Execute → Finish.
+
+
+PASO 3 – Instalar el sistema
+----------------------------
+1. Descomprimir este .zip en Documentos (queda la carpeta "regdoc").
+2. Entrar a la carpeta regdoc y hacer doble clic en  instalar.bat
+3. Cuando pida la contraseña de root, escribir la del Paso 2
+   (no se ven las letras al escribir, es normal) y Enter.
+4. Cuando pregunte por los datos de ejemplo:
+   - S = sí, para la defensa (usuario: directora   contraseña: demo123)
+   - N = no, para usarlo de verdad (la primera vez pide crear la cuenta)
+
+
+PASO 4 – Usar el sistema
+------------------------
+Doble clic en  iniciar.bat
+Se abre en su propia ventana. Al cerrar la ventana, el sistema se apaga.
+
+
+¿CÓMO SE CONECTA CON LA BASE DE DATOS?
+--------------------------------------
+- MySQL queda instalado como un servicio de Windows (MySQL80) que se enciende
+  solo al prender la computadora. Es un programa aparte que guarda los datos.
+- preparar_base.py (lo corre instalar.bat una sola vez) entra a MySQL con la
+  contraseña de root y crea:
+    · la base de datos "regdoc" con sus 12 tablas (sql/esquema.sql)
+    · un usuario de MySQL solo para el sistema: usuario "regdoc", clave "regdoc123",
+      que puede leer y guardar datos pero no borrar tablas.
+- Cuando el sistema funciona, cada vez que se guarda o busca algo, el archivo
+  db.py abre una conexión a MySQL en "localhost" (la misma computadora),
+  puerto 3306, con el usuario regdoc. Esos datos están en config.py.
+- La contraseña de root no se guarda en ningún lado: solo se usa al instalar.
+
+
+SI ALGO FALLA
+-------------
+- "No se encontró Python": repetir el Paso 1 marcando "Add python.exe to PATH".
+- "Contraseña incorrecta": es la contraseña de root del Paso 2.
+- "No se puede conectar con MySQL": Inicio → escribir "Servicios" → buscar MySQL80
+  → clic derecho → Iniciar.
+- La ventana no aparece: abrir la carpeta regdoc, escribir cmd en la barra de
+  direcciones, Enter, y escribir:  python app.py   (ahí se ve el error).
+
+
+ARCHIVOS IMPORTANTES
+--------------------
+- Documentacion_Version_B.docx   documento completo (Word) para anillar
+- capturas\                      12 capturas de pantalla para el anexo
+- CONTEXTO_PARA_CLAUDE.md        pegarlo en Claude para que ayude con este proyecto

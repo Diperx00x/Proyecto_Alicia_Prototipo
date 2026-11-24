@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block titulo %}Aviso{% endblock %}
+{% block contenido %}<h1>Aviso</h1><p>{{ mensaje }}</p><a class="boton claro" href="{{ url_for('inicio.inicio') }}">Volver al inicio</a>{% endblock %}
+{% block publico %}<h1>Aviso</h1><p>{{ mensaje }}</p><a class="boton claro" href="{{ url_for('auth.ingresar') }}">Ingresar</a>{% endblock %}

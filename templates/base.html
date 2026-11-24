@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Registro Documental{% endblock %} · Dirección de Carrera</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+{% if g.usuario %}
+<div class="marco">
+  <nav class="lateral">
+    <div class="marca">
+      <strong>Registro Documental</strong>
+      <span>Dirección de Carrera · Ing. en Sistemas</span>
+    </div>
+    {% set ep = request.endpoint or '' %}
+    <a href="{{ url_for('inicio.inicio') }}" class="{{ 'activo' if ep == 'inicio.inicio' }}">Inicio</a>
+    <a href="{{ url_for('documentos.pendientes') }}" class="{{ 'activo' if ep == 'documentos.pendientes' }}">Pendientes</a>
+    <a href="{{ url_for('documentos.lista') }}" class="{{ 'activo' if ep.startswith('documentos.') and ep != 'documentos.pendientes' }}">Documentos</a>
+    <a href="{{ url_for('contactos.lista') }}" class="{{ 'activo' if ep.startswith('contactos.') }}">Contactos</a>
+    <span class="grupo">Académico</span>
+    <a href="{{ url_for('academico.actas') }}" class="{{ 'activo' if ep.startswith('academico.acta') }}">Actas de graduación</a>
+    <a href="{{ url_for('academico.docentes') }}" class="{{ 'activo' if ep in ('academico.docentes','academico.informe') }}">Informes de docentes</a>
+    <a href="{{ url_for('academico.convocatorias') }}" class="{{ 'activo' if ep.startswith('academico.convocatoria') }}">Auxiliares de cátedra</a>
+    <span class="grupo">Sistema</span>
+    <a href="{{ url_for('admin.copia') }}" class="{{ 'activo' if ep == 'admin.copia' }}">Copia de seguridad</a>
+    {% if g.usuario.rol == 'DIRECTORA' %}
+    <a href="{{ url_for('admin.usuarios') }}" class="{{ 'activo' if ep == 'admin.usuarios' }}">Usuarios</a>
+    <a href="{{ url_for('admin.configuracion') }}" class="{{ 'activo' if ep == 'admin.configuracion' }}">Configuración</a>
+    {% endif %}
+    <div class="sesion">
+      <span>{{ g.usuario.nombre }}</span>
+      <small>{{ 'Directora' if g.usuario.rol == 'DIRECTORA' else 'Secretaria' }}</small>
+      <a href="{{ url_for('auth.mi_clave') }}">Cambiar contraseña</a>
+      <a href="{{ url_for('auth.salir') }}">Salir</a>
+    </div>
+  </nav>
+  <main class="contenido">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for tipo, texto in mensajes %}<div class="aviso {{ tipo }}">{{ texto }}</div>{% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+</div>
+{% else %}
+<main class="solo">
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for tipo, texto in mensajes %}<div class="aviso {{ tipo }}">{{ texto }}</div>{% endfor %}
+  {% endwith %}
+  {% block publico %}{% endblock %}
+</main>
+{% endif %}
+</body>
+</html>

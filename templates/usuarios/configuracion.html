@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Configuración{% endblock %}
+{% block contenido %}
+<h1>Configuración</h1>
+<p class="sub">Datos que cambian poco. Solo la directora los ve.</p>
+<form method="post" class="ficha">
+  <div class="fila"><div><label>Prefijo del CITE de los documentos enviados</label>
+    <input type="text" name="prefijo_cite" value="{{ prefijo }}" required>
+    <p class="ayuda">El sistema agrega el número y la gestión. Ejemplo: {{ prefijo }} 05/{{ gestion }}</p></div></div>
+  <div class="fila"><div><label>Último número de CITE usado en {{ gestion }} antes de usar el sistema</label>
+    <input type="number" name="ultimo_salida" min="0" value="{{ ultimo }}">
+    <p class="ayuda">Si la dirección ya envió, por ejemplo, 120 oficios este año a mano, ponga 120 y el siguiente saldrá 121. El año que viene empieza solo en 01.</p></div></div>
+  <button class="boton">Guardar</button>
+</form>
+{% endblock %}

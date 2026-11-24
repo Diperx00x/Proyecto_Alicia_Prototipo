@@ -1,0 +1,18 @@
+{% if pendientes %}
+<table>
+  <thead><tr><th></th><th>CITE / N° de oficio</th><th>Asunto</th><th>Contacto</th><th>Fecha</th><th>Esperando</th><th>Plazo</th></tr></thead>
+  <tbody>
+  {% for p in pendientes %}
+  <tr>
+    <td><span class="sentido {{ p.sentido }}">{{ 'Recibido' if p.sentido == 'ENTRADA' else 'Enviado' }}</span></td>
+    <td><a href="{{ url_for('documentos.detalle', id_documento=p.id_documento) }}">{{ p.cite }}</a></td>
+    <td>{{ p.asunto }}</td>
+    <td>{{ p.contacto }}</td>
+    <td class="num">{{ p.fecha|fecha }}</td>
+    <td class="num">{{ p.dias }} día{{ '' if p.dias == 1 else 's' }}</td>
+    <td>{% if p.vencido %}<span class="estado vencido">Vencido {{ p.fecha_limite|fecha }}</span>{% elif p.fecha_limite %}{{ p.fecha_limite|fecha }}{% else %}—{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="vacio">No hay documentos pendientes de respuesta.</div>{% endif %}

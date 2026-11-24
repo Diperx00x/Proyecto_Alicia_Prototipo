@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block titulo %}Pendientes{% endblock %}
+{% block contenido %}
+<h1>Pendientes de respuesta</h1>
+<p class="sub">Documentos marcados como «requiere respuesta» que siguen registrados o en trámite. Primero los que tienen plazo más cercano.</p>
+{% include "_tabla_pendientes.html" %}
+{% endblock %}

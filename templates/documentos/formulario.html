@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Registrar enviado' if sentido == 'SALIDA' else 'Registrar recibido' }}{% endblock %}
+{% block contenido %}
+{% set es_salida = sentido == 'SALIDA' %}
+<h1>{% if original %}Responder a {{ original.cite }}{% elif es_salida %}Registrar documento enviado{% else %}Registrar documento recibido{% endif %}</h1>
+<p class="sub">{% if original %}La respuesta queda enlazada y el documento original pasa a «Respondido».{% elif es_salida %}El número de CITE lo pone el sistema.{% else %}Use la fecha del sello de recibido.{% endif %}</p>
+<form method="post" enctype="multipart/form-data" class="ficha">
+  {% if es_salida %}
+  <div class="fila"><div><label>CITE que se asignará</label><div class="cite-previo">{{ siguiente_cite }}</div>
+    <p class="ayuda">Se confirma al guardar. Vuelve a 01 cada gestión.</p></div></div>
+  {% else %}
+  <div class="fila"><div><label>N° de oficio del remitente</label><input type="text" name="cite" value="{{ datos.cite or '' }}" required placeholder="Ej.: VR-0458/2026"></div></div>
+  {% endif %}
+  <div class="fila">
+    <div><label>{{ 'Fecha de envío' if es_salida else 'Fecha del sello de recibido' }}</label><input type="date" name="fecha" value="{{ datos.fecha or '' }}" required></div>
+    <div><label>Categoría</label><select name="categoria" required>
+      <option value="">Elija…</option>
+      {% for c in categorias %}<option {{ 'selected' if datos.categoria==c }}>{{ c }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="fila"><div>
+    <label>{{ 'Destinatario' if es_salida else 'Remitente' }}</label>
+    <select name="id_contacto" required>
+      <option value="">Elija de la lista…</option>
+      {% for c in contactos %}<option value="{{ c.id_contacto }}" {{ 'selected' if datos.id_contacto==c.id_contacto|string }}>{{ c.nombre }}{% if c.cargo %} — {{ c.cargo }}{% endif %}</option>{% endfor %}
+    </select>
+    <p class="ayuda">¿No está en la lista? <a href="{{ url_for('contactos.lista') }}">Agréguelo en Contactos</a>.</p>
+  </div></div>
+  <div class="fila"><div><label>Asunto (REF.)</label><input type="text" name="asunto" value="{{ datos.asunto or '' }}" required maxlength="255"></div></div>
+  <div class="fila">
+    <div><label class="casilla"><input type="checkbox" name="requiere_respuesta" value="1" {{ 'checked' if datos.requiere_respuesta }}> Requiere respuesta</label>
+      <p class="ayuda">Si no la requiere (solo es de conocimiento), no aparece en pendientes.</p></div>
+    <div><label>Fecha límite para responder <small>(opcional)</small></label><input type="date" name="fecha_limite" value="{{ datos.fecha_limite or '' }}"></div>
+  </div>
+  <div class="fila"><div><label>Escaneado <small>(PDF, JPG o PNG · opcional, se puede adjuntar después)</small></label><input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png"></div></div>
+  <div class="acciones">
+    <button class="boton">Guardar</button>
+    <a class="boton claro" href="{{ url_for('documentos.detalle', id_documento=original.id_documento) if original else url_for('documentos.lista') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

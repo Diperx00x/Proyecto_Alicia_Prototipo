@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Primer uso{% endblock %}
+{% block publico %}
+<h1>Bienvenida</h1>
+<p class="sub">Es la primera vez que se abre el sistema. Cree la cuenta de la directora; después ella podrá crear la de la secretaria.</p>
+<form method="post" class="ficha">
+  <div class="fila"><div><label>Nombre completo</label><input type="text" name="nombre" required></div></div>
+  <div class="fila"><div><label>Usuario <small>(para ingresar)</small></label><input type="text" name="usuario" required></div></div>
+  <div class="fila">
+    <div><label>Contraseña</label><input type="password" name="clave" minlength="6" required></div>
+    <div><label>Repetir contraseña</label><input type="password" name="clave2" minlength="6" required></div>
+  </div>
+  <button class="boton">Crear cuenta</button>
+</form>
+{% endblock %}

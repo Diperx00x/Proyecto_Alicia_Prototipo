@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Editar contacto{% endblock %}
+{% block contenido %}
+<h1>Editar contacto</h1>
+<p class="sub">El cambio se ve en todos los documentos de este contacto.</p>
+<form method="post" class="ficha">
+  <div class="fila">
+    <div><label>Nombre con título</label><input type="text" name="nombre" value="{{ c.nombre }}" required></div>
+    <div><label>Cargo</label><input type="text" name="cargo" value="{{ c.cargo or '' }}"></div>
+    <div><label>Institución / unidad</label><input type="text" name="institucion" value="{{ c.institucion or '' }}"></div>
+  </div>
+  <div class="acciones"><button class="boton">Guardar</button><a class="boton claro" href="{{ url_for('contactos.lista') }}">Cancelar</a></div>
+</form>
+{% endblock %}

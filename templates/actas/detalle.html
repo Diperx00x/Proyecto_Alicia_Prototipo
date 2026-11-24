@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Acta {{ a.nro_acta }}{% endblock %}
+{% block contenido %}
+<span class="sentido">ACTA DE GRADUACIÓN</span>
+<h1>N° {{ a.nro_acta }}</h1>
+<p class="sub">{{ a.nombres }} {{ a.apellidos }}</p>
+<div class="detalle">
+  <dl class="datos">
+    <dt>Carnet</dt><dd>{{ a.carnet }}</dd>
+    <dt>Fecha</dt><dd>{{ a.fecha|fecha }}</dd>
+    <dt>Modalidad</dt><dd>{{ a.modalidad }}</dd>
+    <dt>Nota</dt><dd>{{ a.nota }}</dd>
+  </dl>
+  <div>
+    {% if a.archivo %}
+      {% if a.archivo.lower().endswith('.pdf') %}<iframe class="visor" src="{{ url_for('inicio.ver_archivo', ruta=a.archivo) }}"></iframe>
+      {% else %}<img class="visor" style="object-fit:contain" src="{{ url_for('inicio.ver_archivo', ruta=a.archivo) }}" alt="Acta escaneada">{% endif %}
+    {% else %}<div class="vacio">Todavía no tiene escaneado.</div>{% endif %}
+    <form method="post" enctype="multipart/form-data" style="margin-top:1rem">
+      <label>{{ 'Reemplazar escaneado' if a.archivo else 'Adjuntar escaneado' }}</label>
+      <div class="acciones"><input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required><button class="boton claro">Subir</button></div>
+    </form>
+  </div>
+</div>
+<p><a href="{{ url_for('academico.actas') }}">← Volver a actas</a></p>
+{% endblock %}

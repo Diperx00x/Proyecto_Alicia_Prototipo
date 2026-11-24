@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}{{ doc.cite }}{% endblock %}
+{% block contenido %}
+<div class="encabezado">
+  <div>
+    <span class="sentido {{ doc.sentido }}">{{ 'DOCUMENTO RECIBIDO' if doc.sentido == 'ENTRADA' else 'DOCUMENTO ENVIADO' }}</span>
+    <h1>{{ doc.cite }}</h1>
+    <p class="sub">{{ doc.asunto }}</p>
+  </div>
+  <span class="estado {{ doc.estado }}">{{ nombre_estado[doc.estado] }}</span>
+</div>
+<div class="detalle">
+  <div>
+    <dl class="datos">
+      <dt>N° interno</dt><dd>{{ doc.numero }}/{{ doc.gestion }}</dd>
+      <dt>{{ 'Fecha de envío' if doc.sentido == 'SALIDA' else 'Fecha de recibido' }}</dt><dd>{{ doc.fecha|fecha }}</dd>
+      <dt>{{ 'Destinatario' if doc.sentido == 'SALIDA' else 'Remitente' }}</dt><dd>{{ doc.contacto }}{% if doc.contacto_cargo %}<br><small>{{ doc.contacto_cargo }}{% if doc.institucion %} · {{ doc.institucion }}{% endif %}</small>{% endif %}</dd>
+      <dt>Categoría</dt><dd>{{ doc.categoria }}</dd>
+      <dt>Requiere respuesta</dt><dd>{{ 'Sí' if doc.requiere_respuesta else 'No (de conocimiento)' }}</dd>
+      <dt>Fecha límite</dt><dd>{% if doc.fecha_limite %}{{ doc.fecha_limite|fecha }}{% if doc.fecha_limite < hoy and doc.estado in ('REGISTRADO','EN_TRAMITE') %} <span class="estado vencido">Vencido</span>{% endif %}{% else %}—{% endif %}</dd>
+      {% if doc.id_responde_a %}<dt>Responde a</dt><dd><a href="{{ url_for('documentos.detalle', id_documento=doc.id_responde_a) }}">{{ doc.cite_responde_a }}</a></dd>{% endif %}
+      {% if respuestas %}<dt>Respondido con</dt><dd>{% for r in respuestas %}<a href="{{ url_for('documentos.detalle', id_documento=r.id_documento) }}">{{ r.cite }}</a> ({{ r.fecha|fecha }})<br>{% endfor %}</dd>{% endif %}
+      <dt>Registrado por</dt><dd>{{ doc.registrado_por }} · {{ doc.creado_en|fecha }}</dd>
+    </dl>
+
+    {% if siguientes %}
+    <h2>Actualizar</h2>
+    <div class="acciones" style="margin-bottom:1rem">
+      {% if doc.estado in ('REGISTRADO','EN_TRAMITE') %}
+      <a class="boton" href="{{ url_for('documentos.responder', id_documento=doc.id_documento) }}">Registrar respuesta</a>
+      {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('documentos.cambiar_estado', id_documento=doc.id_documento) }}" class="ficha">
+      <div class="fila">
+        <div><label>Nuevo estado</label><select name="estado" required>
+          {% for e in siguientes %}<option value="{{ e }}">{{ nombre_estado[e] }}</option>{% endfor %}</select></div>
+        <div><label>Observación <small>(opcional)</small></label><input type="text" name="observacion" maxlength="255"></div>
+      </div>
+      <button class="boton claro">Cambiar estado</button>
+    </form>
+    {% endif %}
+
+    <h2>Historial</h2>
+    <ol class="historial">
+      {% for m in historial %}
+      <li><span class="estado {{ m.estado }}">{{ nombre_estado[m.estado] }}</span> {{ m.observacion or '' }}
+        <small>{{ m.fecha_hora|fecha }} · {{ m.usuario }}</small></li>
+      {% endfor %}
+    </ol>
+  </div>
+  <div>
+    <h2 style="margin-top:0">Escaneado</h2>
+    {% if doc.archivo %}
+      {% if doc.archivo.lower().endswith('.pdf') %}
+        <iframe class="visor" src="{{ url_for('inicio.ver_archivo', ruta=doc.archivo) }}"></iframe>
+      {% else %}
+        <img class="visor" style="object-fit:contain" src="{{ url_for('inicio.ver_archivo', ruta=doc.archivo) }}" alt="Escaneado">
+      {% endif %}
+      <p><a href="{{ url_for('inicio.ver', ruta=doc.archivo, volver=request.full_path) }}">Ver en grande</a></p>
+    {% else %}
+      <div class="vacio">Todavía no tiene escaneado.</div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('documentos.adjuntar', id_documento=doc.id_documento) }}" style="margin-top:1rem">
+      <label>{{ 'Reemplazar escaneado' if doc.archivo else 'Adjuntar escaneado' }}</label>
+      <div class="acciones"><input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required><button class="boton claro">Subir</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

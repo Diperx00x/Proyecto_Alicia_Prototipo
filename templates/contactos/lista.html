@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}Contactos{% endblock %}
+{% block contenido %}
+<h1>Contactos</h1>
+<p class="sub">Personas e instituciones que envían o reciben documentos. Se eligen de esta lista al registrar, así los nombres no se escriben de formas distintas.</p>
+<form method="post" class="ficha" style="margin-bottom:1.5rem">
+  <div class="fila">
+    <div><label>Nombre con título</label><input type="text" name="nombre" required placeholder="Ej.: Lic. Juan Pérez"></div>
+    <div><label>Cargo</label><input type="text" name="cargo" placeholder="Ej.: Decano"></div>
+    <div><label>Institución / unidad</label><input type="text" name="institucion" placeholder="Ej.: F.IN.I. – U.A.G.R.M."></div>
+  </div>
+  <button class="boton">Agregar contacto</button>
+</form>
+<form class="filtros" method="get">
+  <div class="grande"><label>Buscar</label><input type="search" name="texto" value="{{ texto }}" placeholder="Nombre, cargo o institución"></div>
+  <div><button class="boton claro">Buscar</button></div>
+</form>
+{% if contactos %}
+<table>
+  <thead><tr><th>Nombre</th><th>Cargo</th><th>Institución</th><th>Documentos</th><th></th></tr></thead>
+  <tbody>{% for c in contactos %}
+  <tr><td>{{ c.nombre }}</td><td>{{ c.cargo or '—' }}</td><td>{{ c.institucion or '—' }}</td>
+      <td class="num"><a href="{{ url_for('documentos.lista', texto=c.nombre) }}">{{ c.documentos }}</a></td>
+      <td><a href="{{ url_for('contactos.editar', id_contacto=c.id_contacto) }}">Editar</a></td></tr>
+  {% endfor %}</tbody>
+</table>
+{% else %}<div class="vacio">No hay contactos{{ ' con ese texto' if texto }}.</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Actas de graduación{% endblock %}
+{% block contenido %}
+<div class="encabezado">
+  <div><h1>Actas de graduación</h1><p class="sub">Número de acta asignado por el CPD. Una por estudiante.</p></div>
+  <a class="boton" href="{{ url_for('academico.acta_nueva') }}">Registrar acta</a>
+</div>
+<form class="filtros" method="get">
+  <div class="grande"><label>Buscar</label><input type="search" name="texto" value="{{ texto }}" placeholder="Carnet, nombre o N° de acta" autofocus></div>
+  <div><label>Modalidad</label><select name="modalidad"><option value="">Todas</option>
+    {% for m in modalidades %}<option {{ 'selected' if modalidad==m }}>{{ m }}</option>{% endfor %}</select></div>
+  <div><label>Año</label><input type="number" name="gestion" value="{{ gestion }}" min="2000" max="2100" style="width:100px"></div>
+  <div><button class="boton claro">Buscar</button></div>
+</form>
+{% if actas %}
+<table>
+  <thead><tr><th>N° de acta</th><th>Carnet</th><th>Estudiante</th><th>Fecha</th><th>Modalidad</th><th>Nota</th><th></th></tr></thead>
+  <tbody>{% for a in actas %}
+  <tr><td><a href="{{ url_for('academico.acta_detalle', id_acta=a.id_acta) }}">{{ a.nro_acta }}</a></td>
+      <td class="num">{{ a.carnet }}</td><td>{{ a.apellidos }}, {{ a.nombres }}</td>
+      <td class="num">{{ a.fecha|fecha }}</td><td>{{ a.modalidad }}</td><td class="num">{{ a.nota }}</td>
+      <td>{% if a.archivo %}<a href="{{ url_for('inicio.ver', ruta=a.archivo, volver=request.full_path) }}">Escaneado</a>{% else %}<span class="ayuda">Sin escaneado</span>{% endif %}</td></tr>
+  {% endfor %}</tbody>
+</table>
+{% else %}<div class="vacio">No se encontraron actas.</div>{% endif %}
+{% endblock %}
